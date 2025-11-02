@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>funQuiz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #111;
+            background-color: #fff;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        section.container.py-5 {
+           padding-top: 100px !important; 
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        .search-box input {
+            border-radius: 50px;
+            padding: 12px 20px;
+            border: 1px solid #ccc;
+        }
+        .search-box button {
+            border-radius: 50px;
+            padding: 12px 25px;
+        }
+        .weather-card {
+            border-radius: 25px;
+            height: 250px;
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+        .weather-card:hover {
+            transform: scale(1.05);
+        }
+        .weather-card.main {
+            background-color: #cae0f5;
+        }
+        .weather-card.sub {
+            background-color: #f8d7da;
+        }
+         .weather-card.sub2 {
+            background-color: #e4b5df;
+        }
+        .quiz-section {
+            text-align: center;
+            margin-top: 70px;
+            padding: 60px 20px;
+            padding-bottom: 125px !important; 
+        }
+        .quiz-section h2 {
+            font-weight: 500;
+            color: #555;
+        }
+        .quiz-section h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin: 20px 0;
+        }
+        .quiz-section a.btn {
+            border-radius: 25px;
+            padding: 10px 50px;
+        }
+    </style>
+</head>
+<body>
+    
+    {% include 'navbar.html' %}
+
+    <!-- Hero Section -->
+    <section class="container py-5 d-flex align-items-center justify-content-between">
+        <!-- Left Text -->
+        <div>
+            <h1 class="hero-title mb-4">Hari yang Baik<br>untuk Mulai<br>Perjalanan <br> <span class="text-secondary">Belajar</span> mu</h1>
+            <form method="POST" class="search-box">
+                <p class="text-muted mb-2">Bagaimana cuaca di kota mu?</p>
+                <div class="d-flex align-items-center">
+                    <input type="text" name="city" class="form-control me-2" placeholder="Cari kota mu..." required>
+                    <button type="submit" class="btn btn-dark">Cari</button>
+                </div>
+            </form>
+        </div>
+
+       <!-- Right Weather Cards -->
+        <div class="d-flex gap-3 flex-wrap justify-content-center">
+            {% if weather %}
+                {% for i in range(3) %}
+                    {% if weather|length > i %}
+                        <!-- <div class="weather-card {% if i == 1 %}main{% else %}sub{% endif %} text-center p-3"> -->
+                        <div class="weather-card 
+                    {% if i == 0 %}main{% elif i == 1 %}sub{% else %}sub2{% endif %}
+                    text-center p-3 shadow-sm">
+                            <h5 class="fw-semibold">
+                                {% if i == 0 %}
+                                    Hari Ini
+                                {% elif i == 1 %}
+                                    Besok
+                                {% else %}
+                                    Lusa
+                                {% endif %}
+                            </h5>
+
+                            <p class="text-muted mb-1">
+                                {{ weather[i].dt | datetimeformat('%A, %d %B %Y') }}
+                            </p>
+
+                            <p class="text-capitalize mb-2">
+                                {{ weather[i].weather[0].description }}
+                            </p>
+
+                            <div class="d-flex justify-content-around">
+                                <div>
+                                    <p class="mb-0 fw-bold">Siang</p>
+                                    <p class="fs-5">{{ weather[i].main.temp_day }}°C</p>
+                                </div>
+                                <div>
+                                    <p class="mb-0 fw-bold">Malam</p>
+                                    <p class="fs-5">{{ weather[i].main.temp_night }}°C</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+            <!-- Cuaca Besok -->
+            <div class="weather-card main text-center">
+                    <p class="fw-semibold">Cuaca Hari Ini</p>
+            </div>
+
+            <!-- Cuaca Hari Ini -->
+            <div class="weather-card sub text-center">
+                    <p class="fw-semibold">Cuaca Besok</p>
+
+            </div>
+
+            <!-- Cuaca Lusa -->
+            <div class="weather-card sub2 text-center">
+                    <p class="fw-semibold">Cuaca Lusa</p>
+            </div>
+        </div>
+            {% endif %}
+        </div>
+
+    </section>
+       <!-- Quiz Invitation Section -->
+    <section class="quiz-section">
+        <h2>Ayo Mulai Belajar</h2>
+        <h1>Mulai Perjalanan AI mu dengan Quiz Seru</h1>
+        {% if not logged_in %}
+            <a href="{{ url_for('login') }}" class="btn btn-secondary">Mulai</a>
+        {% else %}
+            <a href="{{ url_for('quiz') }}" class="btn btn-dark">Mulai Quiz</a>
+        {% endif %}
+    </section>
+   {% include 'footer.html' %}
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

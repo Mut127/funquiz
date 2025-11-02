@@ -180,7 +180,7 @@
             }
         });
 
-        // Password validation
+        //validasi pass
         passwordInput.addEventListener("input", () => {
             const val = passwordInput.value;
             const passRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -194,7 +194,7 @@
             }
         });
 
-        // Confirm password validation
+        //konfir pass
         confirmInput.addEventListener("input", () => {
             if (!confirmInput.value) return confirmStatus.textContent = "";
             if (confirmInput.value !== passwordInput.value) {
@@ -206,7 +206,7 @@
             }
         });
 
-        // Toggle password icons
+        //lihat pass
         const togglePassword = document.getElementById("togglePassword");
         const eyeOpen = document.getElementById("eyeOpen");
         const eyeClosed = document.getElementById("eyeClosed");
@@ -228,7 +228,6 @@
             eyeClosedC.style.display = type === "text" ? "inline" : "none";
         });
 
-        // Prevent invalid submission
         form.addEventListener("submit", (e) => {
             const validUser = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{5,}$/.test(usernameInput.value.trim());
             const validPass = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(passwordInput.value);

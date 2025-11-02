@@ -79,7 +79,6 @@
 
 <body class="bg-light">
     {% include 'navbar.html' %}
-
     <div class="login-card text-center">
         <h2 class="mb-4">Sign In</h2>
 
@@ -116,9 +115,7 @@
             <p class="mt-3 text-muted">Belum punya akun? <a href="{{ url_for('register') }}">Daftar di sini</a></p>
         </form>
     </div>
-
     {% include 'footer.html' %}
-
     <script>
         const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
@@ -129,7 +126,7 @@
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
 
-            // Ganti ikon mata
+            //lihat pass
             if (type === 'text') {
                 eyeOpen.style.display = 'none';
                 eyeClosed.style.display = 'block';

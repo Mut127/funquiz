@@ -7,14 +7,13 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = 'rahasia123'
 
-# ========== KONFIGURASI DATABASE MYSQL ==========
-# Ganti 'YOUR_PASS' dengan password MySQL kamu
+#konfigurasi database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/funquiz'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-# ========== MODEL DATABASE ==========
+#model User
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -25,8 +24,7 @@ class User(db.Model):
 with app.app_context():
     db.create_all()
 
-# ========== HALAMAN BERANDA (CUACA) ==========
-# 🔹 Daftarkan filter datetimeformat sebelum route manapun
+#beranda
 @app.template_filter('datetimeformat')
 def datetimeformat(value, format='%A, %d %B %Y'):
     return datetime.fromtimestamp(value).strftime(format)
@@ -68,7 +66,7 @@ def home():
     return render_template('index.html', weather=weather_data, city=city)
 
 
-# ========== REGISTRASI ==========
+#registrasi
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -76,24 +74,23 @@ def register():
         password = request.form['password']
         confirm = request.form['confirm']
 
-        # Cek username unik
+        # cek username
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
             return render_template('register.html', error="Username sudah terdaftar.")
 
-        # Validasi username (huruf + angka)
+        #validasi username
         if not re.match(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{5,}$', username):
             return render_template('register.html', error="Username harus mengandung huruf dan angka (min 5 karakter).")
 
-        # Validasi password (huruf besar, angka, simbol)
+        #validasi password
         if not re.match(r'^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$', password):
             return render_template('register.html', error="Password harus mengandung huruf besar, angka, dan 1 simbol (min 8 karakter).")
 
-        # Cek konfirmasi password
+        #konfir pass
         if password != confirm:
             return render_template('register.html', error="Password dan konfirmasi tidak cocok.")
 
-        # Simpan user baru
         new_user = User(username=username, password=password)
         db.session.add(new_user)
         db.session.commit()
@@ -101,7 +98,7 @@ def register():
 
     return render_template('register.html')
 
-# ========== LOGIN ==========
+#login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -118,20 +115,18 @@ def login():
     return render_template('login.html')
 
 
-# ========== KONTEKS GLOBAL LOGIN ==========
 @app.context_processor
 def inject_login_status():
     return dict(logged_in=('user' in session))
 
-# ========== LOGOUT ==========
+#logout
 @app.route('/logout')
 def logout():
     session.pop('user', None)
     return redirect(url_for('home'))
 
 
-# ========== DATA KUIS ==========
-
+#soal
 questions = [
     {
         "question": "Apa kepanjangan dari NLP?",
@@ -220,7 +215,7 @@ questions = [
 ]
 
 
-# ========== HALAMAN KUIS ==========
+#quiz
 @app.route('/quiz', methods=['GET', 'POST'])
 def quiz():
     if 'user' not in session:
@@ -241,13 +236,13 @@ def quiz():
 
     return render_template('quiz.html', q=question, user=user)
 
-# ========== PAPAN PERINGKAT ==========
+#papan peringkat
 @app.route('/leaderboard')
 def leaderboard():
     users = User.query.order_by(User.score.desc()).all()
     return render_template('leaderboard.html', users=users)
 
-# ========== CEK USERNAME (AJAX) ==========
+#cek username
 @app.route('/check_username', methods=['POST'])
 def check_username():
     data = request.get_json()
@@ -257,8 +252,6 @@ def check_username():
     return jsonify({'exists': exists})
 
 
-
-# ========== JALANKAN APP ==========
 if __name__ == '__main__':
     app.run(debug=True)
     
